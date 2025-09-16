@@ -17,7 +17,7 @@ app.get("/", async (req, res) => {
         const response = await axios.get(URL + "/random/math");
         res.render("index.ejs", { fact: response.data });
     } catch (error) {
-        res.status(404).send(error.response.data);
+        res.render("index.ejs", { fact: "Invalid input! Please enter a proper number or date." });
     }
 });
 
@@ -30,27 +30,27 @@ app.post("/get-fact", async (req, res) => {
         // if its random, then the random endpoint is attached before the category
         if (mode === "random") {
             const response = await axios.get(URL + "/random/" + type);
-            res.render("index.ejs", { fact: response.data })
+            return res.render("index.ejs", { fact: response.data })
         }
         // if its custom, then user given input is extracted and used as the endpoint
         else if (mode === "custom") {
             const input = req.body.customInput;
             // Some basic input validation
-            if (["math", "trivia", "year"].includes(type) && isNaN(input)) {
-                res.render("index.ejs", { fact: "⚠️ Please provide a numeric input" });
-            }
-            if (type === "date" & !/^\d{1,2}\/\d{1,2}$/.test(input)) {
-                res.render("index.ejs", { fact: "⚠️ Provide the date in MM/DD format" });
-            }
             if (!input || input.trim() === "") {
                 return res.render("index.ejs", { fact: "⚠️Input cannot be empty" });
             }
+            if (["math", "trivia", "year"].includes(type) && isNaN(input)) {
+                return res.render("index.ejs", { fact: "⚠️ Please provide a numeric input" });
+            }
+            if (type === "date" && !/^\d{1,2}\/\d{1,2}$/.test(input)) {
+                return res.render("index.ejs", { fact: "⚠️ Provide the date in MM/DD format" });
+            }
             const response = await axios.get(`${URL}/${input}/${type}`);
-            res.render("index.ejs", { fact: response.data })
+            return res.render("index.ejs", { fact: response.data })
         }
         // Error handling in case of errors
     } catch (error) {
-        res.status(404).send(error.response.data);
+       return  res.render("index.ejs", { fact: "Invalid input! Please enter a proper number or date." });
     }
 })
 
