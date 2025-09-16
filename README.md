@@ -26,8 +26,8 @@ It supports four types of facts:
 1. **Clone the repository**
 
    ```bash
-   git clone <your-repo-url>
-   cd <project-folder>
+   git clone https://github.com/Trikshala/math-mind.git
+   cd math-mind
    ```
 
 2. **Install dependencies**
