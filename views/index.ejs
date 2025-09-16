@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Mind</title>
+    <link rel="stylesheet" href="/styles/style.css" />
+</head>
+
+<body>
+    <h1 class="h1-title">Generate a random or custom number fact!</h1>
+    <!-- displaying the selection form area -->
+    <div class="number-form">
+        <form class="input-form" action="/get-fact" method="post">
+            <!-- four types of choices displayed to user -->
+            <div class="button-row">
+                <button type="submit" name="category" value="trivia">Trivia</button>
+                <button type="submit" name="category" value="math">Math</button>
+                <button type="submit" name="category" value="date">Date</button>
+                <button type="submit" name="category" value="year">Year</button>
+            </div>
+            <!-- Dropdown box to choose random or custom mode -->
+            <div class="input-row">
+                <select name="modelSelect" id="modelSelect">
+                    <option value="random">Random</option>
+                    <option value="custom">Custom</option>
+                </select>
+                <!-- user input field -->
+                <input type="text" name="customInput" id="customInput" placeholder="Enter value" style="display:none;">
+            </div>
+
+        </form>
+
+    </div>
+    <!-- The fact displaying area -->
+    <h3>Number Fact 👇</h3>
+    <div class="display-div">
+        <p class="number-fact">
+            <%= fact %>
+        </p>
+    </div>
+    <script>
+        // handling the visibility of the input field
+        const modeSelect = document.getElementById("modelSelect");
+        const customInput = document.getElementById("customInput");
+
+        modeSelect.addEventListener("change", () => {
+            customInput.style.display = modeSelect.value === "custom" ? "inline-block" : "none";
+        });
+    </script>
+
+</body>
+
+</html>
