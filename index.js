@@ -39,18 +39,37 @@ app.post("/get-fact", async (req, res) => {
             if (!input || input.trim() === "") {
                 return res.render("index.ejs", { fact: "⚠️Input cannot be empty" });
             }
-            if (["math", "trivia", "year"].includes(type) && isNaN(input)) {
-                return res.render("index.ejs", { fact: "⚠️ Please provide a numeric input" });
+            if (["math", "trivia", "year"].includes(type)) {
+                const num = Number(input);
+                if (isNaN(num)) {
+                    return res.render("index.ejs", { fact: "⚠️ Please provide a numeric input" });
+                }
+                if (num < 0) {
+                    return res.render("index.ejs", { fact: "⚠️ Please provide a positive number" });
+                }
+                if (type === "year") {
+                    if (!/^\d{1,4}$/.test(input)) {
+                        return res.render("index.ejs", { fact: "⚠️ Year must be between 1 to 4 digits " });
+                    }
+                }
+                const response = await axios.get(`${URL}/${num}/${type}`);
+                return res.render("index.ejs", { fact: response.data });
             }
-            if (type === "date" && !/^\d{1,2}\/\d{1,2}$/.test(input)) {
-                return res.render("index.ejs", { fact: "⚠️ Provide the date in MM/DD format" });
+            if (type === "date") {
+                if (!/^\d{1,2}\/\d{1,2}$/.test(input)) {
+                    return res.render("index.ejs", { fact: "⚠️ Provide the date in MM/DD format" });
+                }
+                const [month, day] = input.split("/").map(Number);
+                if (month < 1 || month > 12) return res.render("index.ejs", { fact: "⚠️ Month must be between 1 and 12" });
+                if (day < 1 || day > 31) return res.render("index.ejs", { fact: "⚠️ Day must be between 1 and 31" });
+                const response = await axios.get(`${URL}/${input}/${type}`);
+                return res.render("index.ejs", { fact: response.data });
             }
-            const response = await axios.get(`${URL}/${input}/${type}`);
             return res.render("index.ejs", { fact: response.data })
         }
         // Error handling in case of errors
     } catch (error) {
-       return  res.render("index.ejs", { fact: "Invalid input! Please enter a proper number or date." });
+        return res.render("index.ejs", { fact: "Invalid input! Please enter a proper number or date." });
     }
 })
 
